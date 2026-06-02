@@ -1,0 +1,89 @@
+---
+title: "Reproducing the G20 results"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Reproducing the G20 results}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 6, fig.height = 4)
+library(sochcontagion)
+```
+
+This vignette reproduces the headline empirical results of the Scale-Ordered
+Contagion paper on the bundled G20 equity returns. The light steps run here;
+the heavier all-pairs and bootstrap steps are shown with `eval = FALSE` and run
+in a few minutes on a laptop.
+
+## Data and the verified directional signature
+
+```{r data}
+data(g20_returns)
+data(market_groups)
+dim(g20_returns)
+
+usa_india <- wqte_profile(g20_returns, "USA", "India", tau = 0.05)
+india_usa <- wqte_profile(g20_returns, "India", "USA", tau = 0.05)
+round(rbind(`USA->India` = usa_india, `India->USA` = india_usa), 4)
+```
+
+The United-States-to-India profile rises through d4 (the fast-source /
+slow-receiver signature of SOCH-A) and exceeds the reverse direction in level
+(SOCH-C):
+
+```{r validate}
+all(diff(usa_india[1:4]) > 0)            # rising d1 -> d4
+mean(usa_india) > mean(india_usa)        # level asymmetry
+plot_scale_profiles(list(`USA->India` = usa_india, `India->USA` = india_usa))
+```
+
+## Test 1 (SOCH-A) and Test 3 (SOCH-C) on the eight-market sample
+
+```{r tests-light}
+adv <- c("USA", "UK", "Germany", "Japan")
+emg <- c("China", "India", "Brazil", "SouthAfrica")
+P <- soch_profiles(g20_returns, c(adv, emg), tau = 0.05)
+
+t1 <- soch_test_ordering(P, emerging = emg)
+c(slope = round(t1$slope, 3), p_value = round(t1$p_value, 3))
+t1$means                                 # mean peak scale by # emerging
+
+t3 <- soch_test_magnitude(P, advanced = adv, emerging = emg)
+c(median_ratio = round(t3$median, 3), frac_gt1 = t3$frac_gt1,
+  p_value = round(t3$p_value, 3))
+```
+
+## Test 4: endogenous classification
+
+```{r test4}
+prof_list <- lapply(names(P), function(k)
+  list(i = sub("\\|.*", "", k), j = sub(".*\\|", "", k), wqte = P[[k]]))
+rates <- soch_fit_market(prof_list, c(adv, emg))
+rates[order(-rates$alpha), ]
+plot_market_rates(rates)
+```
+
+India and China are recovered as decisively the slowest adapters; the faster
+markets cluster near the Nyquist resolution limit and are not separately
+identified -- exactly as the identification analysis predicts.
+
+## Test 2 (SOCH-B): the sharp shape-symmetry test
+
+The shape-symmetry test uses a stationary block bootstrap and is heavier; run
+it directly:
+
+```{r test2, eval = FALSE}
+res <- soch_test_symmetry(g20_returns, c(adv, emg), tau = 0.05, B = 200)
+mean(res$holds)            # share of unordered pairs that do not reject SOCH-B
+plot_soch_symmetry(res)
+```
+
+Or run the entire programme in one call:
+
+```{r pipeline, eval = FALSE}
+out <- soch_pipeline(g20_returns, adv, emg, tau = 0.05, symmetry = TRUE)
+out$test_ordering$p_value
+out$market_rates
+```

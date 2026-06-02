@@ -1,0 +1,28 @@
+citHeader("To cite the sochcontagion package in publications use:")
+
+bibentry(
+  bibtype  = "Manual",
+  title    = "sochcontagion: Scale-Ordered Contagion: Spectral Theory and Tests of Heterogeneous Information Adaptation",
+  author   = c(person(given = "Avishek", family = "Bhandari"),
+               person(given = "Ipsita",  family = "Parida")),
+  year     = "2026",
+  note     = "R package version 0.1.0",
+  url      = "https://github.com/avishekb9/sochcontagion",
+  textVersion = paste(
+    "Bhandari, A., & Parida, I. (2026). sochcontagion: Scale-Ordered Contagion:",
+    "Spectral Theory and Tests of Heterogeneous Information Adaptation.",
+    "R package version 0.1.0. https://github.com/avishekb9/sochcontagion")
+)
+
+bibentry(
+  bibtype  = "Misc",
+  title    = "Scale-Ordered Contagion: A Spectral Theory of Heterogeneous Information Adaptation in Financial Networks",
+  author   = c(person(given = "Avishek", family = "Bhandari"),
+               person(given = "Ipsita",  family = "Parida")),
+  year     = "2026",
+  note     = "Working paper, Indian Institute of Technology Bhubaneswar",
+  textVersion = paste(
+    "Bhandari, A., & Parida, I. (2026). Scale-Ordered Contagion: A Spectral",
+    "Theory of Heterogeneous Information Adaptation in Financial Networks.",
+    "Working paper, IIT Bhubaneswar.")
+)

@@ -1,0 +1,85 @@
+---
+title: "The Scale-Ordered Contagion methodology"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{The Scale-Ordered Contagion methodology}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 6, fig.height = 4)
+library(sochcontagion)
+```
+
+## The mechanism
+
+A shock in a source market $s$ releases information that the receiving market
+$r$ absorbs through its own exponential filter. The transmitted response is the
+convolution of source generation and receiver absorption -- a *bi-exponential*
+whose power spectrum is the product of two Lorentzians, one with corner at the
+source rate $\alpha_s$ and one at the receiver rate $\alpha_r$:
+
+$$ S(\omega) = A^2\,\frac{\alpha_s^2}{\alpha_s^2+\omega^2}\,
+                       \frac{\alpha_r^2}{\alpha_r^2+\omega^2}. $$
+
+The slower market supplies the *binding corner*: it governs the frequency band
+in which contagion power concentrates. The spectrum is symmetric in the two
+rates -- the basis of the shape-symmetry prediction below.
+
+```{r spectrum}
+w <- seq(0, pi, length.out = 200)
+plot(w, soch_spectrum(2.0, 0.2, w), type = "l", lwd = 2,
+     xlab = expression(omega), ylab = "S(omega)",
+     main = "Product-Lorentzian transmission spectrum (fast source, slow receiver)")
+```
+
+## From spectrum to wavelet scales
+
+Projecting the spectrum onto MODWT octave bands gives a closed-form
+transfer-entropy-by-scale profile, `soch_scale_power()`. The two mixed
+directions (fast$\to$slow and slow$\to$fast) have *identical* normalised
+profiles, while fast/fast peaks fine and slow/slow peaks coarse:
+
+```{r profiles}
+P <- list(
+  "fast|fast" = soch_scale_power(2.0, 2.0),
+  "fast|slow" = soch_scale_power(2.0, 0.2),
+  "slow|fast" = soch_scale_power(0.2, 2.0),
+  "slow|slow" = soch_scale_power(0.2, 0.2)
+)
+plot_scale_profiles(P, normalise = TRUE)
+```
+
+The peak frequency obeys $\omega^\star \in [\alpha_\wedge/\sqrt3,\ \alpha_\wedge]$,
+and the predicted peak scale is $k^\star \approx \log_2(\pi/\alpha_\wedge)$:
+
+```{r peak}
+soch_peak_frequency(2.0, 0.2)   # near the slow rate 0.2
+soch_peak_scale(2.0, 0.2)       # a coarse scale
+```
+
+## Three falsifiable predictions
+
+* **SOCH-A** -- the peak scale is set by the slower market's rate, so
+  emerging-inclusive pairs peak at coarser scales.
+* **SOCH-B** -- the *shape* of the scale profile is the same in both
+  directions (the spectrum is symmetric in the two rates).
+* **SOCH-C** -- the *level* is directionally asymmetric, scaling with
+  connectivity and source-shock content.
+
+## Identification
+
+Fitting an observed profile to the closed form recovers the pair's rates by
+nonlinear least squares, concentrating out the level. Because the scale power
+is symmetric, a single direction identifies only the *unordered* pair
+$\{\alpha_\wedge, \alpha_\vee\}$; pooling across pairs that share a market
+resolves the ordering and yields market-level rates.
+
+```{r estimator}
+truth <- 3 * soch_scale_power(2.0, 0.2)        # known rates + a level
+fit <- soch_fit_pair(truth)
+c(amin = round(fit$amin, 3), amax = round(fit$amax, 3), R2 = round(fit$R2, 4))
+```
+
+See the *Replication* vignette to reproduce the headline G20 results.

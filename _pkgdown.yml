@@ -1,0 +1,19 @@
+url: https://avishekb9.github.io/sochcontagion/
+template:
+  bootstrap: 5
+reference:
+  - title: Theory (spectrum and scale power)
+    contents: [soch_spectrum, soch_scale_power, soch_bands, soch_peak_frequency, soch_peak_scale]
+  - title: Wavelet-quantile measure
+    contents: [modwt_detail, wq_gain, wqte_profile]
+  - title: Identification
+    contents: [soch_fit_pair, soch_fit_market, soch_classify]
+  - title: Tests
+    contents: [soch_test_ordering, soch_test_symmetry, soch_test_magnitude]
+  - title: Pipeline and visualisation
+    contents: [soch_profiles, soch_pipeline, plot_scale_profiles, plot_soch_symmetry, plot_market_rates]
+  - title: Utilities and data
+    contents: [sym_kl, phase_surrogate, g20_returns, market_groups]
+articles:
+  - title: Articles
+    contents: [methodology, replication]

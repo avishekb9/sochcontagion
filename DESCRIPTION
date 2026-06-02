@@ -1,0 +1,60 @@
+Package: sochcontagion
+Type: Package
+Title: Scale-Ordered Contagion: Spectral Theory and Tests of
+    Heterogeneous Information Adaptation
+Version: 0.1.0
+Date: 2026-06-02
+Authors@R: c(
+    person(given = "Avishek", family = "Bhandari", role = c("aut","cre"),
+           email = "avishekb@iitbbs.ac.in",
+           comment = "Indian Institute of Technology Bhubaneswar"),
+    person(given = "Ipsita", family = "Parida", role = "aut",
+           email = "a23hs09014@iitbbs.ac.in",
+           comment = "Indian Institute of Technology Bhubaneswar"))
+Description: A spectral theory of financial contagion under heterogeneous
+    information adaptation, with the estimators and falsifiable tests it
+    implies. Modelling both the source and the receiving market as
+    exponential information filters yields a bi-exponential transmission
+    response whose power spectrum is the product of two Lorentzians; the
+    slower market supplies the binding spectral corner. Projected onto a
+    maximal-overlap discrete wavelet basis (Percival and Walden, 2000,
+    ISBN:9780521685085) this gives a closed-form transfer-entropy-by-scale
+    profile and three predictions (Scale-Ordered Contagion): scale ordering
+    by adaptation speed, shape symmetry across direction, and magnitude
+    asymmetry. The package provides the closed-form spectrum and scale
+    power, a profile-matching estimator that recovers adaptation rates and
+    endogenises the fast/slow classification, the wavelet-quantile
+    directional-gain measure built from the transfer-entropy estimator of
+    Schreiber (2000) <doi:10.1103/PhysRevLett.85.461> with quantile
+    conditioning (Koenker and Bassett, 1978) <doi:10.2307/1913643> and the
+    quantile goodness-of-fit of Koenker and Machado (1999)
+    <doi:10.1080/01621459.1999.10473882>, and the three tests with
+    phase-randomised surrogate (Theiler, Eubank, Longtin, Galdrikian and
+    Farmer, 1992) <doi:10.1016/0167-2789(92)90102-S> and stationary
+    block-bootstrap (Politis and Romano, 1994)
+    <doi:10.1080/01621459.1994.10476870> nulls. Bundled G20 equity returns
+    and replication scripts reproduce the headline results; the package is
+    general-purpose and accommodates user-supplied returns.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Depends:
+    R (>= 4.1.0)
+Imports:
+    waveslim,
+    quantreg,
+    stats,
+    graphics,
+    grDevices,
+    utils
+Suggests:
+    ggplot2,
+    readxl,
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+VignetteBuilder: knitr
+RoxygenNote: 7.3.3
+URL: https://github.com/avishekb9/sochcontagion
+BugReports: https://github.com/avishekb9/sochcontagion/issues
+Config/testthat/edition: 3
